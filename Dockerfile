@@ -139,5 +139,5 @@ RUN git clone "https://github.com/ltdrdata/ComfyUI-Manager.git" && \
 
 WORKDIR /app
 ENTRYPOINT [ "python", "main.py", "--listen", "0.0.0.0" ]
-# 컨테이너 실행 시 Jupyter와 ComfyUI를 실행하도록 설정
-CMD ["bash", "-c", "/workspace/start_jupyter.sh"]
+EXPOSE 8888
+CMD ["jupyter", "notebook", "--ip='*'", "--port=8888", "--no-browser", "--allow-root"]
