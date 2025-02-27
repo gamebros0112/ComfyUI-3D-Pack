@@ -1,4 +1,4 @@
-ARG CUDA_VERSION=12.4.0-devel
+ARG CUDA_VERSION=12.1.0-devel
 
 FROM --platform=amd64 docker.io/nvidia/cuda:${CUDA_VERSION}-ubuntu22.04
 
@@ -57,6 +57,14 @@ ENV NVIDIA_DRIVER_CAPABILITIES compute,utility,graphics
 ENV PYOPENGL_PLATFORM egl
 
 WORKDIR /app
+
+# install jupyter
+RUN pip install --no-cache-dir jupyter
+# Jupyter Notebook 실행 스크립트 추가
+RUN echo '#!/bin/bash\njupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root' > /workspace/start_jupyter.sh && \
+    chmod +x /workspace/start_jupyter.sh
+
+
 
 # Clone ComfyUI repository
 RUN git clone "https://github.com/comfyanonymous/ComfyUI.git" ./ && \
@@ -131,3 +139,5 @@ RUN git clone "https://github.com/ltdrdata/ComfyUI-Manager.git" && \
 
 WORKDIR /app
 ENTRYPOINT [ "python", "main.py", "--listen", "0.0.0.0" ]
+# 컨테이너 실행 시 Jupyter와 ComfyUI를 실행하도록 설정
+CMD ["bash", "-c", "/workspace/start_jupyter.sh"]
